@@ -24,9 +24,27 @@ function Tooltip({
 }
 
 function TooltipTrigger({
+  render,
+  children,
   ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+}: React.ComponentProps<typeof TooltipPrimitive.Trigger> & {
+  render?: React.ReactElement
+}) {
+  // Base UI docs pass the trigger element through `render`. Radix composes with
+  // `asChild`, so map that prop onto a single child.
+  if (render) {
+    return (
+      <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} asChild>
+        {children != null ? React.cloneElement(render, {}, children) : render}
+      </TooltipPrimitive.Trigger>
+    )
+  }
+
+  return (
+    <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props}>
+      {children}
+    </TooltipPrimitive.Trigger>
+  )
 }
 
 function TooltipContent({
